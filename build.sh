@@ -130,7 +130,7 @@ if [ ! -d "$CONFIG_DIR/susfs4ksu" ]; then
     git init -q
     git remote add origin https://gitlab.com/simonpunk/susfs4ksu.git
     
-    # Hum seedha us hash ko fetch karenge jo tune top par diya hai
+    # Fetch Hash
     if git fetch --depth 1 origin "$SUSFS_BRANCH"; then
         git checkout -q FETCH_HEAD
         echo "✅ Success: susfs4ksu synced at commit ${SUSFS_BRANCH:0:8}"
@@ -166,7 +166,7 @@ if [ "$CHOICE" == "1" ]; then
     git submodule update --init --recursive
     KSU_FOLDER_NAME="KernelSU-Next"
     
-    # KernelSU-Next Version Logic (As it was)
+    # KernelSU-Next
     cd "$KSU_FOLDER_NAME/kernel"
     COMMITS_COUNT=$(git rev-list --count HEAD)
     BASE_VERSION=$([ "$COMMITS_COUNT" -lt 2684 ] && echo 10200 || echo 30000)
@@ -181,11 +181,11 @@ if [ "$CHOICE" == "1" ]; then
 
 else
     # ============================================================
-    # ADD RESUKISU (EXACTLY AS PER WORKFLOW)
+    # ADD RESUKISU
     # ============================================================
     echo "Adding ReSukiSU..."
     
-    # Workflow style installation
+    # clone
     KSU_INPUT="$RE_BRANCH" # hash or branch
     if [ "$KSU_INPUT" = "" ]; then
       curl --fail --location --proto '=https' -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -
@@ -196,7 +196,7 @@ else
     KSU_FOLDER_NAME="KernelSU"
     cd "$KSU_FOLDER_NAME"
     
-    # Workflow Version Logic
+    # Version Logic
     BASE_VERSION=30700
     KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" $BASE_VERSION)
     KSU_COMMIT_SHA=$(git rev-parse HEAD)
@@ -214,14 +214,14 @@ COMMON_KERNEL_FOLDER="$CONFIG_DIR/kernel_platform/common"
 KERNEL_PATCHES_FOLDER="$CONFIG_DIR/kernel_patches"
 KSUN_FOLDER="$CONFIG_DIR/kernel_platform/$KSU_FOLDER_NAME"
 
-# 1. Copy SUSFS base files (Dono ke liye)
+# 1. Copy SUSFS base files
 echo "Copying SUSFS base files..."
 cp "$SUSFS_FOLDER/kernel_patches/fs/"* "$COMMON_KERNEL_FOLDER/fs/"
 cp "$SUSFS_FOLDER/kernel_patches/include/linux/"* "$COMMON_KERNEL_FOLDER/include/linux/"
 susfs_version=$(grep '#define SUSFS_VERSION' "$COMMON_KERNEL_FOLDER/include/linux/susfs.h" | awk -F'"' '{print $2}')
 
 # -------------------------------------------------------------------------
-# KSUN ONLY BLOCK: Ye patches ReSukiSU (Choice 2) mein skip honge
+# KSUN ONLY BLOCK: patches skip in ReSukiSU (Choice 2)
 # -------------------------------------------------------------------------
 if [ "$CHOICE" == "1" ]; then
     cd "$KSUN_FOLDER"
